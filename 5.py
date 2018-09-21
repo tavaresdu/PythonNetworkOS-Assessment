@@ -11,6 +11,7 @@ try:
         for index in [0, 1]:
             if num < len(num_list[index]):
                 num_sum += int(num_list[index][num])
-        print(sum)
+        print(num_sum, end=' ')
+    print()
 except FileNotFoundError:
     print('Um dos arquivos não foi encontrado!')
