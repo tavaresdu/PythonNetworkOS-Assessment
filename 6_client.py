@@ -1,15 +1,13 @@
 import socket
-BYTES = 1024
-ENCODING = 'UTF-8'
+import pickle
+BYTES = 4096
+path = input('Escreva o diretório: ')
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-   s.connect((socket.gethostname(), 8881))
-   s.send(input(msg).encode(ENCODING))
-   size = int(s.recv(BYTES).decode(ENCODING))
-   if size >= 0:
-       with open('RECEIVED', 'wb') as f:
-           while size > 0:
-               data = s.recv(BYTES)
-               f.write(data)
-               size -= BYTES
-   else:
-       print('Arquivo não existe')
+    s.connect((socket.gethostname(), 29716))
+    s.send(pickle.dumps(path))
+    files = pickle.loads(s.recv(BYTES))
+    if files != 0:
+        for f in files:
+            print(f)
+    else:
+        print('Diretório não encontrado!')

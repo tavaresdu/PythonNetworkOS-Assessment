@@ -1,20 +1,24 @@
 import socket
 import os.path
+import pickle
 BYTES = 4096
-ENCODING = 'UTF-8'
+path = '.'
+print('Iniciando Server...')
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
-   server.bind((socket.gethostname(), 8881))
-   server.listen()
-   while True:
-       (client, address) = server.accept()
-       path = client.recv(BYTES).decode(ENCODING)
-       if os.path.isfile(path):
-           size = os.stat(path).st_size
-           client.send(str(size).encode(ENCODING))
-           with open(path, 'rb') as f:
-               data = f.read(BYTES)
-               while data:
-                   client.send(data)
-                   data = f.read(BYTES)
-       else:
-           client.send('-1'.encode(ENCODING))
+    server.bind((socket.gethostname(), 29716))
+    server.listen()
+    while True:
+        print('Aguardando conexão...')
+        (client, address) = server.accept()
+        path = pickle.loads(client.recv(BYTES))
+        print('Diretório recebido:', path)
+        if os.path.exists(path):
+            files = list()
+            for dir in os.scandir(path):
+                if dir.is_file():
+                    files.append(dir.name)
+            client.send(pickle.dumps(files))
+            print('Nomes de arquivos enviados!')
+        else:
+            print('Diretório inexistente!')
+            client.send(pickle.dumps(0))
