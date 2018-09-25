@@ -1,24 +1,23 @@
 import socket
 import psutil
 import pickle
-BYTES = 1024
+BYTES = 4096
 print('Iniciando Servidor...')
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-    s.bind((socket.gethostname(), 27706))
+    s.bind((socket.gethostname(), 30883))
     while True:
         print('Aguardando requisição...')
-        (requests, client) = s.recvfrom(1024)
-        print('REQUISIÇÃO RECEBIDA')
+        (requests, client) = s.recvfrom(BYTES)
         requests = pickle.loads(requests)
+        print('Requisição:', requests)
         response = list()
-        partition = psutil.disk_partitions()[0]
-        disk = psutil.disk_usage(partition.mountpoint)
+        memory = psutil.virtual_memory()
         for request in requests:
             if request == 'TOTAL':
-                print('LENDO TAMANHO TOTAL DO DISCO')
-                response.append(disk.total)
+                print('Lendo tamanho total de memória...')
+                response.append(memory.total)
             elif request == 'DISP':
-                print('LENDO TAMANHO DISPONÍVEL DO DISCO')
-                response.append(disk.free)
-        print('ENVIANDO RESPOSTA AO CLIENTE')
+                print('Lendo tamanho disponível de memória...')
+                response.append(memory.available)
+        print('Enviando resposta ao cliente...')
         s.sendto(pickle.dumps(response), client)
