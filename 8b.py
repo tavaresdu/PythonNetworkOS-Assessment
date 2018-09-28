@@ -11,16 +11,17 @@ def fatorial(n):
     return fat
 
 
-def main():
+def main(thread):
     while a:
         entry = a.pop()
-        print(entry)
+        print('thread '+str(thread)+' input '+str(entry))
         b[entry[0]] = fatorial(entry[1])
+        print('terminado thread '+str(thread)+' input '+str(entry))
 
 
 threads = []
 for i in range(4):
-    t = threading.Thread(target=main)
+    t = threading.Thread(target=main, args=(i,))
     t.start()
     threads.append(t)
 for t in threads:

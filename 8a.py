@@ -13,7 +13,7 @@ def fatorial(n):
 def main():
     while a:
         entry = a.pop()
-        print(entry)
+        print('input '+str(entry))
         b[entry[0]] = fatorial(entry[1])
 
 
