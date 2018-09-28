@@ -1,5 +1,6 @@
 import multiprocessing
-a = list(enumerate([61863, 85751, 61008, 91486, 98320, 82460, 61334, 52075, 69939, 92354]))
+a = list(enumerate([183677, 186720, 176916, 186554, 113034,]))
+                    # 193701, 131768, 142185, 131518, 105202]))
 b = [0 for i in range(len(a))]
 
 
@@ -10,19 +11,26 @@ def fatorial(n):
     return fat
 
 
-def main(entry, queue):
-    print(entry)
-    queue.put((entry[0], fatorial(entry[1])))
+def main(in_queue, out_queue):
+    while in_queue:
+        entry = in_queue.get()
+        print(entry)
+        out_queue.put((entry[0], fatorial(entry[1])))
 
 
 if __name__ == '__main__':
     processes = []
-    queue = multiprocessing.Queue()
+    in_queue = multiprocessing.Queue()
+    out_queue = multiprocessing.Queue()
+    for entry in a:
+        in_queue.put(entry)
     for i in range(4):
-        p = multiprocessing.Process(target=main, args=(a.pop(), queue))
+        p = multiprocessing.Process(target=main, args=(in_queue, out_queue))
         p.start()
         processes.append(p)
-    for i in range(len(processes)):
-        processes[i].join()
-    print(queue)
-
+    for i in range(len(a)):
+        q = out_queue.get()
+        b[q[0]] = q[1]
+    for p in processes:
+        p.join()
+    print(b)
